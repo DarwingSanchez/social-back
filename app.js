@@ -39,10 +39,17 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(morgan('dev'))
 
+// Defining principal routing
+const users = require('./routes/user');
+const message = require('./routes/message');
+
 const router = express.Router();
 app.use("/api", router);
 
 // API Routing
+router.use('/user', users)
+router.use('/message', message)
+
 
 
 

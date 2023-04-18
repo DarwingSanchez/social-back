@@ -16,19 +16,20 @@ function verifyToken(req, res, next) {
         const token = authHeader && authHeader.split("JWT ").pop(); // Token composition | JWT tokenStringKey
 
         if (token == null){
-            throw('Token no existe')
+            throw new Error('Token no existe')
         }
         // Token verification
         jwt.verify(token, env.secret, (err, user) => {
             if (err){
-                throw('Token inválido')
+                throw new Error('Token inválido')
             };
             
             req.user = user;
             next();
         });
     } catch (error) {
-        res.status(400).json({success: false, mssg: 'Wrong Token', error: error})
+        console.error('Error verifying token', error);
+        res.status(400).json({success: false, msg: 'Wrong Token', error: error.message})
     }
     
 }
