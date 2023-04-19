@@ -9,6 +9,7 @@ const Message = mongoose.Schema({
 });
 
 Message.statics = {
+   // Aggregation to get all messages
    getAll: async function ({ query: outsideQuery, limit, skip }) {
       return await this.aggregate([
 

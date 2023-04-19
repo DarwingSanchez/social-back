@@ -12,15 +12,15 @@ const env = require('../config/database')
  */
 function verifyToken(req, res, next) {
     try {
-        const authHeader = req.headers["authorization"]; // Header
-        const token = authHeader && authHeader.split("JWT ").pop(); // Token composition | JWT tokenStringKey
-
+        const token = req.headers["authorization"]; // Header
+        
         if (token == null){
             throw new Error('Token no existe')
         }
         // Token verification
         jwt.verify(token, env.secret, (err, user) => {
-            if (err){
+            if (err) {
+                console.log('Error', err);
                 throw new Error('Token inválido')
             };
             

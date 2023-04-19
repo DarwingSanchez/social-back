@@ -46,7 +46,7 @@ const createMessage = async (req, res) => {
 }
 
 /**
- * 
+ * Update a message
  * @param {*} req 
  * @param {*} res 
  */
@@ -88,7 +88,8 @@ const updateMessage = async (req, res) => {
 }
 
 /**
- * 
+ * Get all messages, ready to be use including pagination, 
+ * Filter by user, message title or all messages
  * @param {*} req 
  * @param {*} res 
  */
@@ -99,14 +100,14 @@ const getAllMessages = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const skip = (page - 1) * limit; // From index to start to limit.
         const userId = req.params.user_id // In case need messages for a user
-        const { by_user_name, by_date } = req.query; 
+        const { by_title, by_date } = req.query; 
 
         let query = {};
         
         // Check if the consultation it's messages for an specific user or by_user_name
-        if (by_user_name && !userId) {
+        if (by_title && !userId) {
             query = {
-                'creator.fullUserName': { $regex: `${by_user_name}`, $options: 'i' }
+                'titleMessage': { $regex: `${by_title}`, $options: 'i' }
             }
         } else if (userId) {
             query = {
@@ -115,6 +116,7 @@ const getAllMessages = async (req, res) => {
         }
 
         if (by_date) {
+            console.log(by_date);
             query = {
                 ...query,
                 createdAt: { $gte: new Date(by_date), $lte: new Date(by_date) }

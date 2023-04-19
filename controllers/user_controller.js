@@ -45,6 +45,12 @@ const createUser = async (req, res) => {
     }
 }
 
+/**
+ * Login user
+ * @param {*} req | email and password
+ * @param {*} res 
+ * @returns 
+ */
 const login = async (req, res) => {
     try {
         let { email, password } = req.body;
@@ -54,13 +60,30 @@ const login = async (req, res) => {
         email = email.toLowerCase();
     
         let user = await User.findOne({ email }, {createdAt: 0, __v: 0});
-        if (!user) throw new Error('User does not exist.');
-
-        let checkPassword = await BCRYPT.compare(password, user.password);
-        
-        if (!checkPassword) throw new Error('Password given is incorrect');
+        if (!user) {
+            res.status(200).json({
+                success: false,
+                token: null,
+                message: 'User does not exist.',
+                user: null
+            });
+            return
+        };
+        // Compare passwords with bcrypt
+        let checkPassword = await BCRYPT.compare(password, user.password);        
+        if (!checkPassword) {
+            res.status(200).json({
+                success: true,
+                token: null,
+                message: 'Password given is incorrect.',
+                user: null
+            });
+            return
+        };
         
         user.password = undefined;
+
+        // Note: In case user model gets to big, necessary to format a standard object to sign token 
 
         //Sign a token that expires in a week
         const token = JWT.sign({ user }, CONFIG.secret, { expiresIn: 604800 });
